@@ -4,20 +4,13 @@ canvas.height = window.innerHeight;
 
 let objects = [];
 
-for (let i = 0; i < CONFIG.planetCount; i++) {
-  let Planet = new planet(
-    5,
-    10,
-    Math.random() * canvas.width,
-    Math.random() * canvas.height,
-  );
-  objects.push(Planet);
-}
-
-objects.push(new star(10, 30, canvas.width / 2, canvas.height / 2));
+objects.push(new star(1000, 30, canvas.width / 2, canvas.height / 2));
+objects.push(new orbitingPlanet(5, 8, canvas.width / 2 + 250, canvas.height / 2));
 
 const Sim = new sim();
 const Renderer = new renderer(canvas);
+
+Sim.gameify();
 
 function loop() {
     Renderer.ctx.clearRect(0, 0, canvas.width, canvas.height);
