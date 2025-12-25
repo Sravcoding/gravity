@@ -5,12 +5,12 @@ class renderer {
     this.flock = flock;
   }
 
-  drawPlanet(planet) {
+  drawObject(object) {
     const ctx = this.ctx;
 
-    ctx.fillStyle = "#fcfcfc";
+    ctx.fillStyle = `rgb(${object.color[0]},${object.color[1]},${object.color[2]})`;
     ctx.beginPath();
-    ctx.arc(planet.pos.x, planet.pos.y, planet.radius, 0, Math.PI * 2);
+    ctx.arc(object.pos.x, object.pos.y, object.radius, 0, Math.PI * 2);
     ctx.fill();
   }
 }

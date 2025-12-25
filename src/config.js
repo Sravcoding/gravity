@@ -1,5 +1,5 @@
 const CONFIG = {
     planetCount : 5,
     simTime : 0.1,
-    G : 1000
+    G : 100
 };
