@@ -42,7 +42,7 @@ class planet extends object {
 
   trailAdd() {
     this.trail.push({ x: this.pos.x, y: this.pos.y });
-    if (this.trail.length > 9*this.radius) {
+    if (this.trail.length > 50*this.radius) {
       this.trail.shift();
     }
   }
