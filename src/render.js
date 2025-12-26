@@ -60,6 +60,7 @@ class controls {
     this.sunRadius = CONFIG.sunRadius;
     this.planetRadius = CONFIG.planetRadius;
     this.moonRadius = CONFIG.moonRadius;
+    this.planetInitialVelocity = CONFIG.planetInitialVelocity;
 
     this.gui = new lil.GUI({ title: "GUI" });
     this.gui2 = this.gui.addFolder("Simulation Settings");
@@ -118,6 +119,10 @@ class controls {
 
     this.gui3.add(this, "moonRadius", 5, 30, 5).name("Moon Radius").onChange((value) => {
       this.moonRadius = value;
+    });
+
+    this.gui3.add(this, "planetInitialVelocity", 1, 10, 1).name("Planet Initial Velocity").onChange((value) => {
+      this.planetInitialVelocity = value;
     });
 
   }

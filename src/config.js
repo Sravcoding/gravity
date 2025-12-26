@@ -11,5 +11,6 @@ const CONFIG = {
     sunRadius : 30,
     moonMass: 10,
     moonRadius: 5,
+    planetInitialVelocity : 2,
     G : 10
 };

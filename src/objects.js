@@ -17,6 +17,7 @@ class object {
 
     const angle = Math.random() * Math.PI * 2;
     this.velocity = new Vec(Math.cos(angle), Math.sin(angle));
+    this.velocity.mult(Controls.planetInitialVelocity);
 
     this.oldPos = new Vec(x - this.velocity.x * CONFIG.simTime, y - this.velocity.y * CONFIG.simTime);
 
