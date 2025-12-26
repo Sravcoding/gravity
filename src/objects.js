@@ -103,7 +103,6 @@ class orbitingPlanet extends planet {
         (CONFIG.G * orbitObject.mass) / Vec.dist(this.pos, orbitObject.pos)
       )
     );
-    this.velocity.mult(Math.random() * 0.2 + 0.9);
 
     this.oldPos = new Vec(x - this.velocity.x * CONFIG.simTime, y - this.velocity.y * CONFIG.simTime);
   }
