@@ -12,6 +12,14 @@ class renderer {
 
     const ctx = this.ctx;
     ctx.globalAlpha = 1.0;
+
+    if (object instanceof star) {
+        ctx.shadowBlur = object.radius / 2; 
+        ctx.shadowColor = object.strokeColor;
+    } else {
+        ctx.shadowBlur = 0;
+    }
+
     ctx.fillStyle = `rgb(${object.color[0]},${object.color[1]},${object.color[2]})`;
     ctx.beginPath();
     ctx.arc(object.pos.x, object.pos.y, object.radius, 0, Math.PI * 2);
