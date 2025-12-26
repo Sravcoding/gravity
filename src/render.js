@@ -35,28 +35,65 @@ class controls {
   constructor() {
     this.paused = false;
     this.simulationSpeed = CONFIG.simSpeed;
+    this.predictionSpeed = CONFIG.predictionSpeed;
+    this.simulationTime = CONFIG.simTime;
+    this.sunMass = CONFIG.sunMass;
+    this.planetMass = CONFIG.planetMass;
+    this.sunRadius = CONFIG.sunRadius;
+    this.planetRadius = CONFIG.planetRadius;
 
-    this.gui = new lil.GUI({ title: "Controls" });
+    this.gui = new lil.GUI({ title: "GUI" });
+    this.gui2 = this.gui.addFolder("Simulation Settings");
+    this.gui3 = this.gui.addFolder("Object Settings");
+    
     this.createUI();
-    //this.addListeners();
+    this.addListeners();
   }
 
   createUI(){
-    //this.gui.add(this, "paused").name("Pause").listen();
+    this.gui2.add(this, "paused").name("Predict").listen();
 
-    this.gui.add(this, "simulationSpeed", 10, 1000, 1).name("Speed").onChange((value) => {
+    this.gui2.add(this, "simulationSpeed", 10, 1000, 1).name("Speed").onChange((value) => {
       this.simulationSpeed = value;
+    });
+
+    this.gui2.add(this, "simulationTime", 0.001, 0.1).name("Delta T").onChange((value) => {
+      Sim.time = value;
+    });
+
+    this.gui2.add(this, "predictionSpeed", 1, 100, 1).name("Prediction Speed").onChange((value) => {
+      this.predictionSpeed = value;
+    });
+
+    this.gui3.add(this, "sunMass", 300, 2000, 100).name("Sun Mass").onChange((value) => {
+      this.sunMass = value;
+    });
+
+    this.gui3.add(this, "planetMass", 10, 200, 10).name("Planet Mass").onChange((value) => {
+      this.planetMass = value;
+    });
+
+    this.gui3.add(this, "sunRadius", 10, 100, 10).name("Sun Radius").onChange((value) => {
+      this.sunRadius = value;
+    });
+
+    this.gui3.add(this, "planetRadius", 10, 50, 5).name("Planet Radius").onChange((value) => {
+      this.planetRadius = value;
     });
 
   }
 
-  /*addListeners() {
-    window.addEventListener("keydown", (event) => {
-      if (event.code === "Space") {
-        event.preventDefault();
+  addListeners() {
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
         this.togglePause();
       }
     });
-  }*/
+  }
+
+  togglePause() {
+    this.paused = !this.paused;
+  }
 
 }
