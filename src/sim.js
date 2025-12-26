@@ -14,12 +14,21 @@ class sim {
     if (object instanceof star) return;
 
     const force = object.totalForce();
+    const accel = new Vec(force.x / object.mass, force.y / object.mass);
 
-    object.velocity.x += (force.x / object.mass) * this.time;
-    object.velocity.y += (force.y / object.mass) * this.time;
+    const tempX = object.pos.x;
+    const tempY = object.pos.y;
 
-    object.pos.x += object.velocity.x * this.time ;
-    object.pos.y += object.velocity.y * this.time ;
+    // VERLET INTEGRATION FORMULA:
+    // pos = pos * 2 - oldPos + accel * dt^2
+    object.pos.x = object.pos.x * 2 - object.oldPos.x + accel.x * (this.time * this.time);
+    object.pos.y = object.pos.y * 2 - object.oldPos.y + accel.y * (this.time * this.time);
+
+    object.oldPos.x = tempX;
+    object.oldPos.y = tempY;
+
+    object.velocity.x = (object.pos.x - object.oldPos.x) / this.time;
+    object.velocity.y = (object.pos.y - object.oldPos.y) / this.time;
 
     if (i === CONFIG.simSpeed - 1 || i === -1) {
       object.trailAdd();

@@ -18,6 +18,8 @@ class object {
     const angle = Math.random() * Math.PI * 2;
     this.velocity = new Vec(Math.cos(angle), Math.sin(angle));
 
+    this.oldPos = new Vec(x - this.velocity.x * CONFIG.simTime, y - this.velocity.y * CONFIG.simTime);
+
   }
 
   gravity(neighbour) {
@@ -102,6 +104,8 @@ class orbitingPlanet extends planet {
       )
     );
     this.velocity.mult(Math.random() * 0.2 + 0.9);
+
+    this.oldPos = new Vec(x - this.velocity.x * CONFIG.simTime, y - this.velocity.y * CONFIG.simTime);
   }
 }
 
@@ -129,6 +133,8 @@ class moon extends planet {
         (CONFIG.G * orbitObject.mass) / Vec.dist(this.pos, orbitObject.pos)
       )
     );
+
+    this.oldPos = new Vec(x - this.velocity.x * CONFIG.simTime, y - this.velocity.y * CONFIG.simTime);
 
   }
 }
