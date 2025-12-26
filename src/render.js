@@ -49,6 +49,7 @@ class controls {
   constructor() {
     this.paused = false;
     this.maxForce = CONFIG.maxForce;
+    this.simG = CONFIG.G;
     this.outsideBoundsBuffer = CONFIG.outsideBoundsBuffer;
     this.simulationSpeed = CONFIG.simSpeed;
     this.predictionSpeed = CONFIG.predictionSpeed;
@@ -71,11 +72,11 @@ class controls {
   createUI(){
     this.gui2.add(this, "paused").name("Predict").listen();
 
-    this.gui2.add(this, "simulationSpeed", 10, 1000, 1).name("Speed").onChange((value) => {
+    this.gui2.add(this, "simulationSpeed", 10, 500, 1).name("Speed").onChange((value) => {
       this.simulationSpeed = value;
     });
 
-    this.gui2.add(this, "simulationTime", 0.001, 0.1).name("Delta T").onChange((value) => {
+    this.gui2.add(this, "simulationTime", 0.001, 0.01).name("Delta T").onChange((value) => {
       Sim.time = value;
     });
 
@@ -89,6 +90,10 @@ class controls {
 
     this.gui2.add(this, "maxForce", 1, 100, 10).name("Max Force").onChange((value) => {
       this.maxForce = value;
+    });
+
+    this.gui2.add(this, "simG", 1, 20, 1).name("G Constant").onChange((value) => {
+      this.simG = value;
     });
 
     this.gui3.add(this, "sunMass", 300, 2000, 100).name("Sun Mass").onChange((value) => {

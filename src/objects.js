@@ -23,7 +23,7 @@ class object {
   gravity(neighbour) {
     const massSqr = this.mass * neighbour.mass;
     const dist = Vec.dist(this.pos, neighbour.pos);
-    const force = (CONFIG.G * massSqr) / (dist * dist + 20);
+    const force = (Controls.simG * massSqr) / (dist * dist + 100);
     return new Vec(
       (force * (neighbour.pos.x - this.pos.x)) / dist,
       (force * (neighbour.pos.y - this.pos.y)) / dist

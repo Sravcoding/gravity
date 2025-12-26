@@ -2,7 +2,7 @@ const CONFIG = {
     maxForce : 30,
     predictionSpeed : 1,
     simSpeed : 1,
-    simTime : 0.04,
+    simTime : 0.005,
     outsideBoundsBuffer : 1000,
 
     planetMass : 50,

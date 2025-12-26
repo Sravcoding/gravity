@@ -18,12 +18,8 @@ class sim {
     object.velocity.x += (force.x / object.mass) * this.time;
     object.velocity.y += (force.y / object.mass) * this.time;
 
-    object.pos.x +=
-      object.velocity.x * this.time +
-      0.5 * (force.x / object.mass) * this.time * this.time;
-    object.pos.y +=
-      object.velocity.y * this.time +
-      0.5 * (force.y / object.mass) * this.time * this.time;
+    object.pos.x += object.velocity.x * this.time ;
+    object.pos.y += object.velocity.y * this.time ;
 
     if (i === CONFIG.simSpeed - 1 || i === -1) {
       object.trailAdd();
