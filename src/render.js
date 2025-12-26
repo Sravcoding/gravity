@@ -32,6 +32,7 @@ class renderer {
 
   drawTrail(object) {
     const ctx = this.ctx;
+    ctx.shadowBlur = 0;
     ctx.strokeStyle = `rgb(${object.color[0]},${object.color[1]},${object.color[2]})`;
     ctx.lineWidth = 5;
     for (let i = 1; i < object.trail.length; i++) {
