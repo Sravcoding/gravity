@@ -4,6 +4,17 @@ class object {
     this.radius = radius;
     this.pos = new Vec(x, y);
 
+    this.color = [
+      Math.random() * 255,
+      Math.random() * 255,
+      Math.random() * 255,
+    ];
+    const r = Math.max(0, this.color[0] - 80);
+    const g = Math.max(0, this.color[1] - 80);
+    const b = Math.max(0, this.color[2] - 80);
+
+    this.strokeColor = `rgb(${r},${g},${b})`;
+
     const angle = Math.random() * Math.PI * 2;
     this.velocity = new Vec(Math.cos(angle), Math.sin(angle));
 
@@ -11,8 +22,8 @@ class object {
 
   gravity(neighbour) {
     const massSqr = this.mass * neighbour.mass;
-    const dist = Vec.dist(this.pos, neighbour.pos) + 0.001;
-    const force = (CONFIG.G * massSqr) / (dist * dist + 15);
+    const dist = Vec.dist(this.pos, neighbour.pos);
+    const force = (CONFIG.G * massSqr) / (dist * dist + 20);
     return new Vec(
       (force * (neighbour.pos.x - this.pos.x)) / dist,
       (force * (neighbour.pos.y - this.pos.y)) / dist
@@ -25,7 +36,7 @@ class object {
       if (neighbour === this) continue;
       force.add(this.gravity(neighbour));
     }
-
+    force.limit(Controls.maxForce);
     return force;
   }
 
@@ -34,11 +45,6 @@ class object {
 class planet extends object {
   constructor(mass, radius, x, y) {
     super(mass, radius, x, y);
-    this.color = [
-      Math.random() * 255,
-      Math.random() * 255,
-      Math.random() * 255,
-    ];
     this.trail = [];
 
     this.tempTrail = [];
@@ -99,9 +105,43 @@ class orbitingPlanet extends planet {
   }
 }
 
+class moon extends planet {
+  constructor(mass, radius, x, y) {
+    super(mass, radius, x, y);
+
+    if (Sim.planets.length === 0){
+      throw new Error("No planet to orbit around!");
+    }
+    let orbitObject = Sim.planets[0];
+
+    for (let planet of Sim.planets){
+      if (Vec.dist(new Vec(x,y), planet.pos) < Vec.dist(new Vec(x,y), orbitObject.pos)){
+        orbitObject = planet;
+        break;
+      }
+    }
+
+    const angle =
+      Math.atan2(y - orbitObject.pos.y, x - orbitObject.pos.x) + Math.PI / 2;
+    this.velocity = new Vec(Math.cos(angle), Math.sin(angle));
+    this.velocity.mult(
+      Math.sqrt(
+        (CONFIG.G * orbitObject.mass) / Vec.dist(this.pos, orbitObject.pos)
+      )
+    );
+
+  }
+}
+
+
 class star extends object {
   constructor(mass, radius, x, y) {
     super(mass, radius, x, y);
     this.color = [255, Math.floor(255 - (this.mass - 500) * (255 / 1500)), 0];
+    const r = Math.max(0, this.color[0] - 80);
+    const g = Math.max(0, this.color[1] - 80);
+    const b = Math.max(0, this.color[2] - 80);
+
+    this.strokeColor = `rgb(${r},${g},${b})`;
   }
 }

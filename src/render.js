@@ -6,15 +6,20 @@ class renderer {
   }
 
   drawObject(object) {
+    if (object instanceof planet) {          
+      this.drawTrail(object);
+    }   
+
     const ctx = this.ctx;
     ctx.globalAlpha = 1.0;
     ctx.fillStyle = `rgb(${object.color[0]},${object.color[1]},${object.color[2]})`;
     ctx.beginPath();
     ctx.arc(object.pos.x, object.pos.y, object.radius, 0, Math.PI * 2);
     ctx.fill();
-    if (object instanceof planet) {
-      this.drawTrail(object);
-    }
+    ctx.strokeStyle = object.strokeColor || 'black'; 
+    ctx.lineWidth = Math.floor(object.radius/10) + 1; 
+    ctx.stroke();
+     
   }
 
   drawTrail(object) {
@@ -34,13 +39,17 @@ class renderer {
 class controls {
   constructor() {
     this.paused = false;
+    this.maxForce = CONFIG.maxForce;
+    this.outsideBoundsBuffer = CONFIG.outsideBoundsBuffer;
     this.simulationSpeed = CONFIG.simSpeed;
     this.predictionSpeed = CONFIG.predictionSpeed;
     this.simulationTime = CONFIG.simTime;
     this.sunMass = CONFIG.sunMass;
     this.planetMass = CONFIG.planetMass;
+    this.moonMass = CONFIG.moonMass;
     this.sunRadius = CONFIG.sunRadius;
     this.planetRadius = CONFIG.planetRadius;
+    this.moonRadius = CONFIG.moonRadius;
 
     this.gui = new lil.GUI({ title: "GUI" });
     this.gui2 = this.gui.addFolder("Simulation Settings");
@@ -65,6 +74,14 @@ class controls {
       this.predictionSpeed = value;
     });
 
+    this.gui2.add(this, "outsideBoundsBuffer", 500, 10000, 100).name("Bounds Buffer").onChange((value) => {
+      this.outsideBoundsBuffer = value;
+    });
+
+    this.gui2.add(this, "maxForce", 1, 100, 10).name("Max Force").onChange((value) => {
+      this.maxForce = value;
+    });
+
     this.gui3.add(this, "sunMass", 300, 2000, 100).name("Sun Mass").onChange((value) => {
       this.sunMass = value;
     });
@@ -73,12 +90,20 @@ class controls {
       this.planetMass = value;
     });
 
+    this.gui3.add(this, "moonMass", 1, 30, 5).name("Moon Mass").onChange((value) => {
+      this.moonMass = value;
+    });
+
     this.gui3.add(this, "sunRadius", 10, 100, 10).name("Sun Radius").onChange((value) => {
       this.sunRadius = value;
     });
 
     this.gui3.add(this, "planetRadius", 10, 50, 5).name("Planet Radius").onChange((value) => {
       this.planetRadius = value;
+    });
+
+    this.gui3.add(this, "moonRadius", 5, 30, 5).name("Moon Radius").onChange((value) => {
+      this.moonRadius = value;
     });
 
   }

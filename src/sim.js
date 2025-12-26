@@ -1,82 +1,124 @@
-class sim{
-    constructor(){
-        this.objects = [];
-        this.planets = [];
-        this.stars = [];
+class sim {
+  constructor() {
+    this.objects = [];
+    this.planets = [];
+    this.stars = [];
 
-        this.time = CONFIG.simTime;
-        this.keys = {};
-        this.mouse = {x: 0, y: 0};
-        this.setUpListeners();
+    this.time = CONFIG.simTime;
+    this.keys = {};
+    this.mouse = { x: 0, y: 0 };
+    this.setUpListeners();
+  }
+
+  step(object, i) {
+    if (object instanceof star) return;
+
+    const force = object.totalForce();
+
+    object.velocity.x += (force.x / object.mass) * this.time;
+    object.velocity.y += (force.y / object.mass) * this.time;
+
+    object.pos.x +=
+      object.velocity.x * this.time +
+      0.5 * (force.x / object.mass) * this.time * this.time;
+    object.pos.y +=
+      object.velocity.y * this.time +
+      0.5 * (force.y / object.mass) * this.time * this.time;
+
+    if (i === CONFIG.simSpeed - 1 || i === -1) {
+      object.trailAdd();
     }
 
-    step(object, i){
-        if (object instanceof star) return;
+    if (i != -1) {
+      this.oob(object);
+      this.inSun(object);
+    }
+  }
+  inSun(object) {
+    for (let star of this.stars) {
+      if (
+        Math.hypot(object.pos.x - star.pos.x, object.pos.y - star.pos.y) <
+        star.radius
+      ) {
+        this.deleteObject(object);
+      }
+    }
+  }
+
+  oob(object) {
+    const buffer = Controls.outsideBoundsBuffer;
+    if (
+      object.pos.x + object.radius < -buffer ||
+      object.pos.x - object.radius > canvas.width + buffer ||
+      object.pos.y + object.radius < -buffer ||
+      object.pos.y - object.radius > canvas.height + buffer
+    ) {
+      this.deleteObject(object);
+    }
+  }
+
+  deleteObject(object) {
+    const index = this.objects.indexOf(object);
+    if (index > -1) {
+      this.objects.splice(index, 1);
+    }
+  }
+
+  setUpListeners() {
     
-        const force = object.totalForce();
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
-        object.velocity.x += force.x/object.mass*this.time;
-        object.velocity.y += force.y/object.mass*this.time;   
+    document.addEventListener("mousemove", (e) => {
+      this.mouse = { x: e.clientX, y: e.clientY };
+    });
+    document.addEventListener("keydown", (e) => {
+      this.keys[e.key] = true;
+    });
 
-        object.pos.x += object.velocity.x * this.time + 0.5*(force.x/object.mass)*this.time*this.time;
-        object.pos.y += object.velocity.y * this.time + 0.5*(force.y/object.mass)*this.time*this.time;
-
-        if (i === CONFIG.simSpeed - 1 || i === -1){object.trailAdd();}
-
-        if (i != -1){this.oob(object);this.inSun(object);}
-    }
-    inSun(object){
-        for (let star of this.stars){
-            if (Math.hypot(object.pos.x - star.pos.x, object.pos.y - star.pos.y) < star.radius){
-                this.deleteObject(object);
-            }
+    document.addEventListener("keyup", (e) => {
+      try {
+        if (this.keys["o"] === true) {
+          const planeti = new orbitingPlanet(
+            Controls.planetMass,
+            Controls.planetRadius,
+            this.mouse.x,
+            this.mouse.y
+          );
+          this.objects.push(planeti);
+          this.planets.push(planeti);
+        } else if (this.keys["p"] === true) {
+          const planeti = new planet(
+            Controls.planetMass,
+            Controls.planetRadius,
+            this.mouse.x,
+            this.mouse.y
+          );
+          this.objects.push(planeti);
+          this.planets.push(planeti);
+        } else if (this.keys["m"] === true) {
+          this.objects.push(
+            new moon(
+              Controls.moonMass,
+              Controls.moonRadius,
+              this.mouse.x,
+              this.mouse.y
+            )
+          );
+        } else if (this.keys["s"] === true) {
+          const mass = Controls.sunMass;
+          const radius = Controls.sunRadius;
+          const sun = new star(mass, radius, this.mouse.x, this.mouse.y);
+          this.objects.push(sun);
+          this.stars.push(sun);
         }
-    }
+      } catch (err) {
+        alert(err);
+      }
 
-    oob(object){
-        if (object.pos.x + object.radius < 0 || object.pos.x - object.radius > canvas.width || object.pos.y + object.radius < 0 || object.pos.y - object.radius > canvas.height){
-           this.deleteObject(object);
-        }
-    }
-
-    deleteObject(object){
-         const index = this.objects.indexOf(object);
-            if (index > -1){
-                this.objects.splice(index, 1);
-            }
-    }
-
-    setUpListeners(){
-        document.addEventListener('mousemove', (e) => {
-            this.mouse = {x: e.clientX, y: e.clientY};
-        });
-        document.addEventListener('keydown', (e) => {
-            this.keys[e.key] = true;
-        });
-
-        document.addEventListener('keyup', (e) => {
-            try{
-                if (this.keys['o'] === true){
-                    this.objects.push(new orbitingPlanet(Controls.planetMass, Controls.planetRadius, this.mouse.x, this.mouse.y));
-                }
-                else if (this.keys['p'] === true){
-                    this.objects.push(new planet(Controls.planetMass, Controls.planetRadius, this.mouse.x, this.mouse.y));
-                }
-                else if (this.keys['s'] === true){
-                    const mass = Controls.sunMass;
-                    const radius = Controls.sunRadius;
-                    const sun = new star(mass, radius, this.mouse.x, this.mouse.y);
-                    this.objects.push(sun);
-                    this.stars.push(sun);
-                }
-            }catch(err){
-                alert(err);
-            }
-
-            this.keys[e.key] = false;
-        }); 
-
-    }
-
-
+      this.keys[e.key] = false;
+    });
+  }
 }
